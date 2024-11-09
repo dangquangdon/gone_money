@@ -1,9 +1,11 @@
 use std::error::Error;
-use std::{env, path::Path};
+use std::path::Path;
 
 use sqlx::migrate::Migrator;
 use sqlx::postgres::PgConnection;
 use sqlx::Connection;
+
+use crate::utils::get_env;
 
 #[derive(Debug)]
 pub struct GoneDb {
@@ -37,16 +39,10 @@ impl GoneDb {
     pub fn get_migration_dir(self) -> String {
         return self.migration_dir;
     }
+
 }
 
-fn get_env(key: &str) -> String {
-    match env::var(key) {
-        Ok(val) => val,
-        Err(e) => panic!("Failed to get environment variable for {}: {}", key, e),
-    }
-}
-
-fn get_conn_str() -> String {
+pub fn get_conn_str() -> String {
     let port = get_env("DB_PORT");
     let user = get_env("DB_USER");
     let pass = get_env("DB_PASS");

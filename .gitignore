@@ -1,3 +1,6 @@
 /target
 gone_money
 .env
+gone_money.conf
+
+.vscode

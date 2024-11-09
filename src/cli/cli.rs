@@ -1,8 +1,11 @@
 use clap::{arg, Command};
 
-use crate::db::GoneDb;
+use crate::{
+    db::{get_conn_str, GoneDb},
+    token::generate_token,
+};
 
-use super::makemigration;
+use super::{makemigration, pg_rest_config::write_rest_config};
 
 fn cli() -> Command {
     Command::new("gone-money")
@@ -15,6 +18,8 @@ fn cli() -> Command {
                 .arg(arg!(-n --name [NAME] "Name of the migration file (Optional)")),
         )
         .subcommand(Command::new("migrate").about("Run migrations"))
+        .subcommand(Command::new("make-rest-config").about("Create PostgREST config file"))
+        .subcommand(Command::new("jwt-token").about("Get JWT Token for API Authentication header"))
 }
 
 pub async fn run(migration_dir: &str) {
@@ -27,6 +32,14 @@ pub async fn run(migration_dir: &str) {
             makemigration::generate_migration_file(migration_dir, name);
         }
         Some(("migrate", _)) => store.migrate().await,
+        Some(("make-rest-config", _)) => {
+            write_rest_config(get_conn_str());
+        }
+        Some(("jwt-token", _)) => {
+            let token = generate_token();
+            println!("Here is your token:");
+            println!("{}", token);
+        }
         _ => {
             println!("Invalid command")
         }
