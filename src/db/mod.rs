@@ -25,6 +25,14 @@ impl GoneDb {
 
     pub async fn migrate(&mut self) {
         let dir = self.migration_dir.clone();
+        return self.run_migration(dir).await;
+    }
+
+    pub fn get_migration_dir(self) -> String {
+        return self.migration_dir;
+    }
+
+    async fn run_migration(&mut self, dir: String) {
         let migrator = match Migrator::new(Path::new(&dir)).await {
             Ok(m) => m,
             Err(e) => panic!("Failed to start migration: {}", e),
@@ -35,11 +43,6 @@ impl GoneDb {
             Err(e) => panic!("Failed to migrate: {}", e),
         };
     }
-
-    pub fn get_migration_dir(self) -> String {
-        return self.migration_dir;
-    }
-
 }
 
 pub fn get_conn_str() -> String {

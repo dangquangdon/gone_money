@@ -1,11 +1,8 @@
 use clap::{arg, Command};
 
-use crate::{
-    db::{get_conn_str, GoneDb},
-    token::generate_token,
-};
+use crate::db::{get_conn_str, GoneDb};
 
-use super::{makemigration, pg_rest_config::write_rest_config};
+use super::{makemigration, pg_rest_config::write_rest_config, token};
 
 fn cli() -> Command {
     Command::new("gone-money")
@@ -36,7 +33,7 @@ pub async fn run(migration_dir: &str) {
             write_rest_config(get_conn_str());
         }
         Some(("jwt-token", _)) => {
-            let token = generate_token();
+            let token = token::generate_token();
             println!("Here is your token:");
             println!("{}", token);
         }

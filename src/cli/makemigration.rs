@@ -68,9 +68,13 @@ fn get_default_filename() -> String {
 }
 
 pub fn generate_migration_file(dir: &str, name: Option<&str>) {
+    let path = Path::new(dir);
+    // Create the directory if it does not exist.
+    fs::create_dir_all(path).unwrap();
+
     let last_migration_number = get_the_last_migration_number(dir);
     let next_migration_name = get_next_migration_filename(name, last_migration_number);
-    let filepath = Path::new(dir).join(next_migration_name.clone());
+    let filepath = path.join(next_migration_name.clone());
     match File::create(filepath) {
         Ok(_) => println!(
             "New migration file {} added to {}",
